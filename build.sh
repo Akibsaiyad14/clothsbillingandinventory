@@ -3,7 +3,7 @@
 set -o errexit
 
 # Install dependencies from backend directory
-pip install -r backend/requirements.txt
+# pip install -r backend/requirements.txt
 
 # Change to backend directory
 cd backend
