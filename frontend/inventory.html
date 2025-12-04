@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - Cloth Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-store"></i>
+                <span>Cloth Shop</span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/inventory" class="active"><i class="fas fa-boxes"></i> Inventory</a></li>
+                <li><a href="/billing"><i class="fas fa-receipt"></i> Billing</a></li>
+                <li><a href="/reports"><i class="fas fa-chart-line"></i> Reports</a></li>
+            </ul>
+            <div id="authInfo" class="auth-info"></div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="page-title">Inventory Management</h1>
+                <button class="btn btn-primary" onclick="showAddItemModal()">
+                    <i class="fas fa-plus"></i> Add New Item
+                </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="card filters-section">
+                <div class="filters">
+                    <input type="text" id="searchInput" placeholder="Search items..." class="form-control">
+                    <select id="categoryFilter" class="form-control">
+                        <option value="">All Categories</option>
+                        <option value="SHIRT">Shirt</option>
+                        <option value="TSHIRT">T-Shirt</option>
+                        <option value="PANTS">Pants</option>
+                        <option value="JEANS">Jeans</option>
+                        <option value="JACKET">Jacket</option>
+                        <option value="SWEATER">Sweater</option>
+                    </select>
+                    <select id="sizeFilter" class="form-control">
+                        <option value="">All Sizes</option>
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="applyFilters()">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Items Grid -->
+            <div id="itemsGrid" class="items-grid">
+                <div class="loading">Loading items...</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Item</h2>
+                <span class="close" onclick="closeAddItemModal()">&times;</span>
+            </div>
+            <form id="addItemForm">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" required class="form-control">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category" required class="form-control">
+                            <option value="SHIRT">Shirt</option>
+                            <option value="TSHIRT">T-Shirt</option>
+                            <option value="PANTS">Pants</option>
+                            <option value="JEANS">Jeans</option>
+                            <option value="JACKET">Jacket</option>
+                            <option value="SWEATER">Sweater</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Size</label>
+                        <select name="size" required class="form-control">
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="text" name="color" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" name="price" step="0.01" required class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>SKU</label>
+                    <input type="text" name="sku" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="3" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Initial Stock Quantity</label>
+                    <input type="number" name="initial_stock" value="0" min="0" class="form-control">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddItemModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Stock Modal -->
+    <div id="updateStockModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update Stock</h2>
+                <span class="close" onclick="closeUpdateStockModal()">&times;</span>
+            </div>
+            <form id="updateStockForm">
+                <input type="hidden" id="stockItemId" name="item_id">
+                <div class="form-group">
+                    <label>Item: <span id="stockItemName"></span></label>
+                </div>
+                <div class="form-group">
+                    <label>Current Stock: <span id="currentStock"></span></label>
+                </div>
+                <div class="form-group">
+                    <label>New Stock Quantity</label>
+                    <input type="number" name="quantity" min="0" required class="form-control">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeUpdateStockModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/inventory.js"></script>
+</body>
+</html>

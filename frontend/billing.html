@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing - Cloth Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-store"></i>
+                <span>Cloth Shop</span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/inventory"><i class="fas fa-boxes"></i> Inventory</a></li>
+                <li><a href="/billing" class="active"><i class="fas fa-receipt"></i> Billing</a></li>
+                <li><a href="/reports"><i class="fas fa-chart-line"></i> Reports</a></li>
+            </ul>
+            <div id="authInfo" class="auth-info"></div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Create New Bill</h1>
+
+            <div class="billing-layout">
+                <!-- Customer Details -->
+                <div class="card">
+                    <h3 class="card-title">Customer Information</h3>
+                    <div class="form-group">
+                        <label>Customer Name *</label>
+                        <input type="text" id="customerName" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="customerPhone" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="customerEmail" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Add Items -->
+                <div class="card">
+                    <h3 class="card-title">Add Items</h3>
+                    <div class="form-group">
+                        <label>Search Item</label>
+                        <input type="text" id="itemSearch" placeholder="Search by name or SKU..." class="form-control">
+                    </div>
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+
+                <!-- Cart -->
+                <div class="card">
+                    <h3 class="card-title">Cart</h3>
+                    <div id="cartItems" class="cart-items">
+                        <p class="empty-cart">No items added yet</p>
+                    </div>
+                </div>
+
+                <!-- Bill Summary -->
+                <div class="card bill-summary">
+                    <h3 class="card-title">Bill Summary</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Discount (%)</label>
+                            <input type="number" id="discount" value="0" min="0" max="100" step="0.01" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Tax Rate (%)</label>
+                            <input type="number" id="taxRate" value="0" min="0" max="100" step="0.01" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea id="notes" rows="2" class="form-control"></textarea>
+                    </div>
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Discount:</span>
+                            <span id="discountAmount">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax:</span>
+                            <span id="taxAmount">$0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <span id="total">$0.00</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="createBill()">
+                        <i class="fas fa-check"></i> Create Bill
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/billing.js"></script>
+</body>
+</html>

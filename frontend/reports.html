@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Cloth Shop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-store"></i>
+                <span>Cloth Shop</span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/inventory"><i class="fas fa-boxes"></i> Inventory</a></li>
+                <li><a href="/billing"><i class="fas fa-receipt"></i> Billing</a></li>
+                <li><a href="/reports" class="active"><i class="fas fa-chart-line"></i> Reports</a></li>
+            </ul>
+            <div id="authInfo" class="auth-info"></div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <h1 class="page-title">Sales Reports</h1>
+
+            <!-- Filters -->
+            <div class="card filters-section">
+                <div class="filters">
+                    <input type="text" id="searchBills" placeholder="Search by customer or bill number..." class="form-control">
+                    <input type="date" id="dateFrom" class="form-control">
+                    <input type="date" id="dateTo" class="form-control">
+                    <button class="btn btn-secondary" onclick="applyFilters()">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bills List -->
+            <div class="card">
+                <h3 class="card-title">All Bills</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Bill No.</th>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="billsTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center;">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bill Details Modal -->
+    <div id="billDetailsModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>Bill Details</h2>
+                <span class="close" onclick="closeBillDetailsModal()">&times;</span>
+            </div>
+            <div id="billDetailsContent">
+                <!-- Bill details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/reports.js"></script>
+</body>
+</html>
