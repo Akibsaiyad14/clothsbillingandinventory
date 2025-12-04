@@ -316,10 +316,24 @@
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
+        width: 280px;
+        box-shadow: none;
     }
     
     .sidebar.active {
         transform: translateX(0);
+        box-shadow: 8px 0 24px rgba(0, 0, 0, 0.3);
+        z-index: 10001;
+    }
+    
+    .sidebar.collapsed {
+        width: 280px;
+    }
+    
+    .sidebar.collapsed .brand-text,
+    .sidebar.collapsed .nav-text,
+    .sidebar.collapsed .user-details {
+        display: block !important;
     }
     
     .main-wrapper {
@@ -334,12 +348,34 @@
         padding: 1rem;
     }
     
+    .topbar .page-title {
+        font-size: 1.125rem;
+    }
+    
     .content {
         padding: 1rem;
     }
     
     .stats-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Mobile sidebar overlay */
+@media (max-width: 768px) {
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 10000;
+        display: none;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
     }
 }
 

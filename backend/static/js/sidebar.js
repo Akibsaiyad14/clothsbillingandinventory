@@ -1,17 +1,40 @@
 // Sidebar functionality
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('collapsed');
     
-    // Save state
-    const isCollapsed = sidebar.classList.contains('collapsed');
-    localStorage.setItem('sidebarCollapsed', isCollapsed);
+    // Desktop: toggle collapsed state
+    if (window.innerWidth > 768) {
+        sidebar.classList.toggle('collapsed');
+        
+        // Save state
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+    } 
+    // Mobile: toggle active state
+    else {
+        sidebar.classList.toggle('active');
+        toggleMobileOverlay();
+    }
 }
 
-// Mobile sidebar toggle
+// Create and toggle mobile overlay
+function toggleMobileOverlay() {
+    let overlay = document.getElementById('sidebarOverlay');
+    
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'sidebarOverlay';
+        overlay.className = 'sidebar-overlay';
+        overlay.onclick = toggleSidebar;
+        document.body.appendChild(overlay);
+    }
+    
+    overlay.classList.toggle('active');
+}
+
+// Mobile sidebar toggle (alias for consistency)
 function toggleMobileSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('active');
+    toggleSidebar();
 }
 
 // Initialize sidebar state
@@ -37,12 +60,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.innerWidth <= 768) {
             const sidebar = document.getElementById('sidebar');
             const toggleBtn = document.querySelector('.mobile-sidebar-toggle');
+            const overlay = document.getElementById('sidebarOverlay');
             
             if (sidebar && sidebar.classList.contains('active') && 
                 !sidebar.contains(e.target) && 
-                !toggleBtn.contains(e.target)) {
+                !toggleBtn?.contains(e.target)) {
                 sidebar.classList.remove('active');
+                if (overlay) {
+                    overlay.classList.remove('active');
+                }
             }
+        }
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (window.innerWidth > 768) {
+            // Desktop: remove mobile classes
+            sidebar.classList.remove('active');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+        } else {
+            // Mobile: remove collapsed class
+            sidebar.classList.remove('collapsed');
         }
     });
 });
