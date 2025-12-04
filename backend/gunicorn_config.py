@@ -6,8 +6,9 @@ import multiprocessing
 workers = 1  # Use only 1 worker to minimize memory usage
 worker_class = 'sync'
 worker_connections = 1000
-timeout = 120  # Increase timeout to prevent worker timeouts
+timeout = 300  # Increase timeout to 5 minutes to prevent worker timeouts
 keepalive = 5
+graceful_timeout = 30
 
 # Logging
 accesslog = '-'
@@ -28,3 +29,6 @@ tmp_upload_dir = None
 # Memory management
 max_requests = 1000
 max_requests_jitter = 100
+
+# Prevent memory leaks
+preload_app = False

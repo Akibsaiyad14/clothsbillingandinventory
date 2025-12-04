@@ -120,27 +120,35 @@ class BillViewSet(viewsets.ModelViewSet):
             # Calculate totals
             bill.calculate_totals()
             
-            # Send email with PDF if customer email is provided
+            # Return response immediately, email will be sent asynchronously
+            response_data = BillSerializer(bill).data
+            
+            # Try to send email in background (non-blocking)
             if bill.customer_email:
                 try:
+                    from threading import Thread
                     from .pdf_generator import generate_bill_pdf
                     from .email_utils import send_bill_email
                     
-                    pdf_content = generate_bill_pdf(bill)
-                    email_sent = send_bill_email(bill, pdf_content)
+                    def send_email_async():
+                        try:
+                            pdf_content = generate_bill_pdf(bill)
+                            send_bill_email(bill, pdf_content)
+                            print(f"Email sent successfully for bill {bill.bill_number}")
+                        except Exception as e:
+                            print(f"Background email sending failed: {str(e)}")
                     
-                    response_data = BillSerializer(bill).data
-                    response_data['email_sent'] = email_sent
+                    # Start email sending in background thread
+                    email_thread = Thread(target=send_email_async)
+                    email_thread.daemon = True
+                    email_thread.start()
                     
-                    return Response(response_data, status=status.HTTP_201_CREATED)
+                    response_data['email_status'] = 'sending'
                 except Exception as e:
-                    # Log error but still return success for bill creation
-                    print(f"Email sending failed: {str(e)}")
+                    print(f"Failed to start email thread: {str(e)}")
+                    response_data['email_status'] = 'failed'
             
-            return Response(
-                BillSerializer(bill).data,
-                status=status.HTTP_201_CREATED
-            )
+            return Response(response_data, status=status.HTTP_201_CREATED)
             
         except Exception as e:
             print(f"Bill creation error: {str(e)}")
