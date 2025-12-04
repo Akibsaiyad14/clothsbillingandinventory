@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
 from django.utils import timezone
 from django.http import HttpResponse
@@ -15,6 +16,7 @@ import string
 class BillViewSet(viewsets.ModelViewSet):
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
+    permission_classes = [IsAuthenticated]  # Require authentication for all actions
 
     def get_queryset(self):
         queryset = Bill.objects.all()
@@ -51,9 +53,6 @@ class BillViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request):
         """Create a new bill with items"""
-        # require authentication to create bills
-        if not request.user or not request.user.is_authenticated:
-            return Response({'error': 'Authentication required to create bills'}, status=status.HTTP_403_FORBIDDEN)
         serializer = CreateBillSerializer(data=request.data)
         
         if not serializer.is_valid():

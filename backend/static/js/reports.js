@@ -175,8 +175,33 @@ function closeBillDetailsModal() {
 }
 
 // Download bill PDF
-function downloadBillPDF(billId) {
-    window.open(`${API_ENDPOINTS.bills}${billId}/download_pdf/`, '_blank');
+async function downloadBillPDF(billId) {
+    try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`${API_ENDPOINTS.bills}${billId}/download_pdf/`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to download PDF');
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bill_${billId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Error downloading PDF:', error);
+        showNotification('Failed to download PDF', 'error');
+    }
 }
 
 // Close modal on outside click

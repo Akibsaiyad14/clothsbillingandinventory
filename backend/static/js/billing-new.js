@@ -256,7 +256,6 @@ async function createBill() {
         showNotification('Bill created successfully! Redirecting to dashboard...', 'success');
         
         // Download PDF with authentication
-        const token = localStorage.getItem('access_token');
         const response = await fetch(`${API_ENDPOINTS.bills}${bill.id}/download_pdf/`, {
             method: 'GET',
             headers: {

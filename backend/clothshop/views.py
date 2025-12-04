@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+def login(request):
+    """Login page - accessible to all"""
+    return render(request, 'login.html')
 
 def dashboard(request):
     """Dashboard page"""
@@ -15,7 +19,3 @@ def billing(request):
 def reports(request):
     """Reports page"""
     return render(request, 'reports.html')
-
-def login(request):
-    """Login page"""
-    return render(request, 'login.html')

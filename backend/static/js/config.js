@@ -93,9 +93,16 @@ async function apiRequest(url, options = {}) {
                 });
             } else {
                 // Refresh failed, redirect to login
-                window.location.href = 'login.html';
+                window.location.href = '/login/';
                 throw new Error('Session expired');
             }
+        }
+
+        // If still unauthorized or forbidden, redirect to login
+        if (response.status === 401 || response.status === 403) {
+            TokenManager.clearTokens();
+            window.location.href = '/login/';
+            throw new Error('Authentication required');
         }
 
         if (!response.ok) {
@@ -178,6 +185,13 @@ async function checkAuth() {
         authInfo.innerHTML = `
             <a href="/login/" class="btn btn-sm btn-secondary">Login</a>
         `;
+        
+        // Redirect to login if on protected page and not logged in
+        const currentPath = window.location.pathname;
+        const protectedPages = ['/dashboard/', '/inventory/', '/billing/', '/reports/'];
+        if (protectedPages.includes(currentPath)) {
+            window.location.href = '/login/';
+        }
     }
 }
 

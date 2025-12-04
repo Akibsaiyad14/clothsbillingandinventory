@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from .models import ClothItem, Stock
 from .serializers import ClothItemSerializer, StockSerializer, StockUpdateSerializer
@@ -9,6 +10,7 @@ from .serializers import ClothItemSerializer, StockSerializer, StockUpdateSerial
 class ClothItemViewSet(viewsets.ModelViewSet):
     queryset = ClothItem.objects.all()
     serializer_class = ClothItemSerializer
+    permission_classes = [IsAuthenticated]  # Require authentication for all actions
 
     def get_queryset(self):
         queryset = ClothItem.objects.all()
@@ -54,6 +56,7 @@ class ClothItemViewSet(viewsets.ModelViewSet):
 class StockViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
+    permission_classes = [IsAuthenticated]  # Require authentication for all actions
 
     @action(detail=False, methods=['post'])
     def update_stock(self, request):
