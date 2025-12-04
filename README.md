@@ -11,6 +11,7 @@ A complete cloth shop billing and inventory management system with Django REST F
 - **PDF Generation**: Automatically generate professional PDF invoices using ReportLab (in Indian Rupees ₹)
 - **RESTful API**: Complete REST API for all operations with filtering and search capabilities
 - **JWT Authentication**: Secure token-based authentication system with refresh tokens
+- **Email Integration**: Automatic email delivery of PDF invoices to customers
 
 ### Frontend
 - **Dashboard**: Overview with statistics, low stock alerts, and recent bills
@@ -28,8 +29,10 @@ A complete cloth shop billing and inventory management system with Django REST F
 - Django 4.2.7
 - Django REST Framework 3.14.0
 - Django REST Framework Simple JWT 5.3.0
+- **PostgreSQL** (with camelCase table names)
 - ReportLab 4.0.7 (PDF generation)
-- SQLite (default database)
+- **Python-dotenv** (environment variable management)
+- **psycopg2-binary** (PostgreSQL adapter)
 
 ### Frontend
 - HTML5
@@ -39,6 +42,12 @@ A complete cloth shop billing and inventory management system with Django REST F
 - JWT token storage via LocalStorage
 
 ## Installation & Setup
+
+### Prerequisites
+1. **Python 3.8+** installed
+2. **PostgreSQL** installed and running
+   - Download from: https://www.postgresql.org/download/
+   - Remember your PostgreSQL password during installation
 
 ### Backend Setup
 
@@ -62,27 +71,66 @@ A complete cloth shop billing and inventory management system with Django REST F
    pip install -r requirements.txt
    ```
 
-5. **Run migrations:**
+5. **Configure environment variables:**
+   - Copy `.env.example` to `.env`
+   - Edit `.env` file with your settings:
+   ```env
+   # Database
+   DB_NAME=clothshop_db
+   DB_USER=postgres
+   DB_PASSWORD=your_postgresql_password
+   DB_HOST=localhost
+   DB_PORT=5432
+   
+   # Email (Gmail example)
+   EMAIL_HOST_USER=your_email@gmail.com
+   EMAIL_HOST_PASSWORD=your_gmail_app_password
+   DEFAULT_FROM_EMAIL=your_email@gmail.com
+   ```
+   
+   **Gmail App Password Setup:**
+   - Go to: https://myaccount.google.com/apppasswords
+   - Generate a new app password
+   - Use the 16-character password in `.env`
+
+6. **Create PostgreSQL database:**
+   ```powershell
+   # Option 1: Using management command
+   python manage.py create_database
+   
+   # Option 2: Using psql
+   psql -U postgres -c "CREATE DATABASE clothshop_db;"
+   ```
+
+7. **Run migrations:**
    ```powershell
    python manage.py makemigrations
    python manage.py migrate
    ```
+   
+   This creates tables with camelCase names:
+   - `clothItems`, `stockLevels`, `customerBills`, `billItems`
 
-6. **Create superuser (optional):**
+8. **Create superuser (optional):**
    ```powershell
    python manage.py createsuperuser
    ```
 
-7. **Create demo user for testing:**
+9. **Create demo user for testing:**
    ```powershell
    python manage.py create_demo_user
    ```
    This creates a demo user with credentials: `demo` / `demo1234`
 
-8. **Run the development server:**
-   ```powershell
-   python manage.py runserver
-   ```
+10. **Populate sample data (optional):**
+    ```powershell
+    python manage.py populate_items
+    ```
+
+11. **Run the development server:**
+    ```powershell
+    python manage.py runserver
+    ```
 
 The application will be available at `http://localhost:8000/`
 
@@ -175,6 +223,7 @@ clothShops/
 │   │   ├── views.py
 │   │   ├── urls.py
 │   │   └── pdf_generator.py
+│   │   └── email_utils.py   # Email sending utility
 │   ├── templates/          # Django templates
 │   │   ├── dashboard.html
 │   │   ├── inventory.html
@@ -190,11 +239,14 @@ clothShops/
 │   │       ├── inventory.js
 │   │       ├── billing.js
 │   │       └── reports.js
+│   ├── .env                # Environment variables (not in git)
+│   ├── .env.example        # Example environment file
 │   ├── manage.py
 │   └── requirements.txt
 ├── .git/
 ├── .gitignore
-└── README.md
+├── README.md
+└── DATABASE_SETUP.md       # PostgreSQL setup guide
 ```
 
 ## Key Features
@@ -204,6 +256,9 @@ clothShops/
 - **Indian Rupees**: Currency displayed as ₹ throughout the application and PDFs
 - **Responsive Design**: Mobile-friendly interface with collapsible navigation
 - **JWT Authentication**: Secure token-based authentication
+- **PostgreSQL Database**: Enterprise-grade database with camelCase table naming
+- **Email Delivery**: Automatic invoice email to customers
+- **Environment Variables**: Secure credential management with .env files
 
 ## API Endpoints
 
@@ -240,13 +295,13 @@ clothShops/
 
 ### Creating Bills
 1. Go to Billing page
-2. Enter customer information
+2. Enter customer information (including email for invoice delivery)
 3. Search for items and add them to cart
 4. Adjust quantities as needed
 5. Set discount and tax rate (optional)
 6. Add notes (optional)
 7. Click "Create Bill"
-8. PDF will automatically download
+8. PDF will automatically download **and be emailed to the customer**
 
 ### Viewing Reports
 1. Go to Reports page
@@ -268,6 +323,50 @@ Access the Django admin panel at `http://localhost:8000/admin/` to:
 - Manage items and stock
 - View and edit bills
 - Monitor system data
+
+## Security & Configuration
+
+### Environment Variables
+All sensitive credentials are stored in `.env` file:
+- Database credentials (PostgreSQL)
+- Email credentials (SMTP)
+- Django secret key
+- Debug mode settings
+
+**Important:** Never commit `.env` file to version control!
+
+### Email Configuration
+The system uses SMTP to send invoices. For Gmail:
+1. Enable 2-Step Verification
+2. Generate App Password at: https://myaccount.google.com/apppasswords
+3. Use app password in `.env` file
+
+### Database Tables (camelCase)
+PostgreSQL tables are named in camelCase format:
+- `clothItems` - Product inventory
+- `stockLevels` - Stock tracking
+- `customerBills` - Sales records
+- `billItems` - Bill line items
+
+## Troubleshooting
+
+### PostgreSQL Connection Error
+- Verify PostgreSQL is running
+- Check credentials in `.env` file
+- Ensure database `clothshop_db` exists
+
+### Email Not Sending
+- Verify email credentials in `.env`
+- Check Gmail app password is correct
+- Ensure EMAIL_USE_TLS=True for Gmail
+- Check firewall/antivirus settings
+
+### Migration Errors
+```powershell
+python manage.py makemigrations --empty inventory
+python manage.py makemigrations --empty billing
+python manage.py migrate --fake
+```
 
 ## Future Enhancements
 

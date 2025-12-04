@@ -112,6 +112,23 @@ class BillViewSet(viewsets.ModelViewSet):
         # Calculate totals
         bill.calculate_totals()
         
+        # Send email with PDF if customer email is provided
+        if bill.customer_email:
+            try:
+                from .pdf_generator import generate_bill_pdf
+                from .email_utils import send_bill_email
+                
+                pdf_content = generate_bill_pdf(bill)
+                email_sent = send_bill_email(bill, pdf_content)
+                
+                response_data = BillSerializer(bill).data
+                response_data['email_sent'] = email_sent
+                
+                return Response(response_data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                # Log error but still return success for bill creation
+                print(f"Email sending failed: {str(e)}")
+        
         return Response(
             BillSerializer(bill).data,
             status=status.HTTP_201_CREATED

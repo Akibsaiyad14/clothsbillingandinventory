@@ -45,6 +45,7 @@ class ClothItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'clothItems'
         ordering = ['-created_at']
         indexes = [
             models.Index(fields=['category', 'size']),
@@ -68,6 +69,9 @@ class Stock(models.Model):
     )
     low_stock_threshold = models.IntegerField(default=10)
     last_restocked = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'stockLevels'
 
     def __str__(self):
         return f"{self.item.name} - Stock: {self.quantity}"

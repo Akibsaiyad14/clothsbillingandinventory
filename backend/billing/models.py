@@ -35,6 +35,7 @@ class Bill(models.Model):
     notes = models.TextField(blank=True)
 
     class Meta:
+        db_table = 'customerBills'
         ordering = ['-created_at']
 
     def __str__(self):
@@ -79,6 +80,9 @@ class BillItem(models.Model):
         max_digits=10,
         decimal_places=2
     )
+
+    class Meta:
+        db_table = 'billItems'
 
     def __str__(self):
         return f"{self.item.name} x {self.quantity}"
