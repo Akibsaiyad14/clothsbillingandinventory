@@ -16,6 +16,7 @@ class BillItemSerializer(serializers.ModelSerializer):
 
 class BillSerializer(serializers.ModelSerializer):
     items = BillItemSerializer(many=True, read_only=True)
+    created_at = serializers.DateTimeField(format='%d-%m-%Y %H:%M', read_only=True)
 
     class Meta:
         model = Bill

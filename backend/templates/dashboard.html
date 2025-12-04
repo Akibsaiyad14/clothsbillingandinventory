@@ -1,18 +1,33 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloth Shop Management</title>
-    <script>
-        // Simple router - redirect to dashboard by default
-        window.location.replace('dashboard.html');
-    </script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <p>Redirecting to dashboard...</p>
-</body>
-</html>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <i class="fas fa-store"></i>
+                <span>Cloth Shop</span>
+            </div>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="{% url 'inventory' %}"><i class="fas fa-boxes"></i> Inventory</a></li>
+                <li><a href="{% url 'billing' %}"><i class="fas fa-receipt"></i> Billing</a></li>
+                <li><a href="{% url 'reports' %}"><i class="fas fa-chart-line"></i> Reports</a></li>
+            </ul>
+            <div id="authInfo" class="auth-info"></div>
+        </div>
+    </nav>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -119,7 +134,7 @@
         </div>
     </main>
 
-    <script src="js/config.js"></script>
-    <script src="js/dashboard.js"></script>
+    <script src="{% static 'js/config.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
 </body>
 </html>

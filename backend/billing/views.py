@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.db import transaction
 from django.utils import timezone
 from django.http import HttpResponse
+from datetime import datetime, timedelta
 from .models import Bill, BillItem
 from .serializers import BillSerializer, CreateBillSerializer
 from inventory.models import ClothItem, Stock
@@ -28,9 +29,22 @@ class BillViewSet(viewsets.ModelViewSet):
         date_to = self.request.query_params.get('date_to', None)
         
         if date_from:
-            queryset = queryset.filter(created_at__gte=date_from)
+            # Convert date string to datetime at start of day
+            try:
+                date_from_dt = datetime.strptime(date_from, '%Y-%m-%d')
+                queryset = queryset.filter(created_at__gte=date_from_dt)
+            except ValueError:
+                pass
+        
         if date_to:
-            queryset = queryset.filter(created_at__lte=date_to)
+            # Convert date string to datetime at end of day
+            try:
+                date_to_dt = datetime.strptime(date_to, '%Y-%m-%d')
+                # Add one day and filter less than (to include entire day)
+                date_to_dt = date_to_dt + timedelta(days=1)
+                queryset = queryset.filter(created_at__lt=date_to_dt)
+            except ValueError:
+                pass
         
         return queryset
 

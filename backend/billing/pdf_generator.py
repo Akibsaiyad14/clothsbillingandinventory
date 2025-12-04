@@ -42,7 +42,7 @@ def generate_bill_pdf(bill):
     
     # Bill Info
     bill_info_data = [
-        ['Bill Number:', bill.bill_number, 'Date:', bill.created_at.strftime('%Y-%m-%d %H:%M')],
+        ['Bill Number:', bill.bill_number, 'Date:', bill.created_at.strftime('%d-%m-%Y %H:%M')],
         ['Customer:', bill.customer_name, 'Phone:', bill.customer_phone or 'N/A'],
     ]
     

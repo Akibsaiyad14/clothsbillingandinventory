@@ -49,7 +49,7 @@ ROOT_URLCONF = 'clothshop.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,12 +100,19 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Date and DateTime formats
+DATE_FORMAT = 'd-m-Y'
+DATETIME_FORMAT = 'd-m-Y H:i'
+SHORT_DATE_FORMAT = 'd-m-Y'
+SHORT_DATETIME_FORMAT = 'd-m-Y H:i'
+
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type

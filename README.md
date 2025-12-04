@@ -84,7 +84,9 @@ A complete cloth shop billing and inventory management system with Django REST F
    python manage.py runserver
    ```
 
-The API will be available at `http://localhost:8000/api/`
+The application will be available at `http://localhost:8000/`
+
+**Note:** The frontend is now fully integrated into Django. No separate frontend server is needed!
 
 ### Authentication & Login
 
@@ -93,7 +95,7 @@ The API will be available at `http://localhost:8000/api/`
 - Password: `demo1234`
 
 **How to Login:**
-1. Go to `http://localhost:8080/login.html`
+1. Go to `http://localhost:8000/login/`
 2. Enter username and password
 3. Click "Sign In"
 4. You'll be redirected to the dashboard with your username displayed in the header
@@ -112,22 +114,45 @@ The API will be available at `http://localhost:8000/api/`
 - `POST /api/auth/register/` - Register new user
 - `POST /api/auth/token/refresh/` - Refresh access token
 
-### Frontend Setup
+## Accessing the Application
 
-1. **Navigate to frontend directory:**
-   ```powershell
-   cd frontend
-   ```
+Once both setup steps are complete, simply start the Django server and access the application:
 
-2. **Open `index.html` in your browser:**
-   - You can use any web server (Python's http.server, Live Server extension in VS Code, etc.)
-   - Or simply open `index.html` directly in your browser
+## Accessing the Application
 
-3. **Using Python's built-in server (recommended):**
-   ```powershell
-   python -m http.server 8080
-   ```
-   Then open `http://localhost:8080` in your browser
+Once both setup steps are complete, simply start the Django server and access the application:
+
+```powershell
+cd backend
+python manage.py runserver
+```
+
+Open your browser and go to:
+- **Homepage**: http://localhost:8000/ (redirects to dashboard)
+- **Dashboard**: http://localhost:8000/dashboard/
+- **Inventory**: http://localhost:8000/inventory/
+- **Billing**: http://localhost:8000/billing/
+- **Reports**: http://localhost:8000/reports/
+- **Login Page**: http://localhost:8000/login/
+- **API**: http://localhost:8000/api/
+- **Admin Panel**: http://localhost:8000/admin/
+
+### **Login Instructions**
+
+1. Go to http://localhost:8000/login/
+2. Use demo credentials:
+   - Username: `demo`
+   - Password: `demo1234`
+3. After login, you'll see your username in the header with a Logout button
+
+**Important Notes:**
+- The frontend is now fully integrated into Django - no separate server needed!
+- All pages are served through Django's URL routing with clean URLs
+- **All dates are displayed in DD-MM-YYYY format** for consistency and easy filtering
+- The UI and PDF invoices use Indian Rupees (₹)
+- Creating bills requires authentication (login first)
+- All amounts are displayed in ₹ format
+- The interface is fully responsive and mobile-friendly
 
 ## Project Structure
 
@@ -137,6 +162,7 @@ clothShops/
 │   ├── clothshop/          # Main project settings
 │   │   ├── settings.py
 │   │   ├── urls.py
+│   │   ├── views.py        # Template views
 │   │   └── wsgi.py
 │   ├── inventory/          # Inventory app
 │   │   ├── models.py       # ClothItem, Stock models
@@ -149,22 +175,35 @@ clothShops/
 │   │   ├── views.py
 │   │   ├── urls.py
 │   │   └── pdf_generator.py
+│   ├── templates/          # Django templates
+│   │   ├── dashboard.html
+│   │   ├── inventory.html
+│   │   ├── billing.html
+│   │   ├── reports.html
+│   │   └── login.html
+│   ├── static/             # Static files (CSS, JS)
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   └── js/
+│   │       ├── config.js
+│   │       ├── dashboard.js
+│   │       ├── inventory.js
+│   │       ├── billing.js
+│   │       └── reports.js
 │   ├── manage.py
 │   └── requirements.txt
-└── frontend/
-    ├── css/
-    │   └── style.css       # All styles with gradients
-    ├── js/
-    │   ├── config.js       # API configuration
-    │   ├── dashboard.js
-    │   ├── inventory.js
-    │   ├── billing.js
-    │   └── reports.js
-    ├── index.html          # Dashboard page
-    ├── inventory.html      # Inventory management
-    ├── billing.html        # Create bills
-    └── reports.html        # View all bills
+├── .git/
+├── .gitignore
+└── README.md
 ```
+
+## Key Features
+
+- **Clean URLs**: All pages accessible via `/dashboard/`, `/inventory/`, `/billing/`, `/reports/`, `/login/`
+- **Date Format**: All dates displayed in **DD-MM-YYYY HH:MM** format for easy filtering and readability
+- **Indian Rupees**: Currency displayed as ₹ throughout the application and PDFs
+- **Responsive Design**: Mobile-friendly interface with collapsible navigation
+- **JWT Authentication**: Secure token-based authentication
 
 ## API Endpoints
 

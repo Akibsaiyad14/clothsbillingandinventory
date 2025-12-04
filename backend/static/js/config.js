@@ -116,10 +116,23 @@ function formatCurrency(amount) {
     return `₹${num.toFixed(2)}`;
 }
 
-// Helper function to format date
+// Helper function to format date to dd-mm-yyyy HH:MM
 function formatDate(dateString) {
+    if (!dateString) return '';
+    
+    // If it's already in dd-mm-yyyy format from API, return as is
+    if (dateString.includes('-') && dateString.split('-')[0].length <= 2) {
+        return dateString;
+    }
+    
     const date = new Date(dateString);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
 
 // Helper function to show notifications
@@ -163,7 +176,7 @@ async function checkAuth() {
         `;
     } else {
         authInfo.innerHTML = `
-            <a href="/login" class="btn btn-sm btn-secondary">Login</a>
+            <a href="/login/" class="btn btn-sm btn-secondary">Login</a>
         `;
     }
 }
@@ -179,7 +192,7 @@ async function logout() {
     TokenManager.clearTokens();
     showNotification('Logged out successfully');
     setTimeout(() => {
-        window.location.href = '/login';
+        window.location.href = '/login/';
     }, 1000);
 }
 
