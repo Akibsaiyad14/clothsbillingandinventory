@@ -1,5 +1,6 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:8000/api';
+// Use relative URL for API calls (works for both localhost and production)
+const API_BASE_URL = window.location.origin + '/api';
 
 const API_ENDPOINTS = {
     items: `${API_BASE_URL}/inventory/items/`,
