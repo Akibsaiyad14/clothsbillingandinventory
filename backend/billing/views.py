@@ -53,85 +53,103 @@ class BillViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def create(self, request):
         """Create a new bill with items"""
-        serializer = CreateBillSerializer(data=request.data)
-        
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        data = serializer.validated_data
-        
-        # Generate unique bill number
-        bill_number = self._generate_bill_number()
-        
-        # Create bill
-        bill = Bill.objects.create(
-            bill_number=bill_number,
-            customer_name=data['customer_name'],
-            customer_phone=data.get('customer_phone', ''),
-            customer_email=data.get('customer_email', ''),
-            discount=data.get('discount', 0),
-            tax_rate=data.get('tax_rate', 0),
-            notes=data.get('notes', '')
-        )
-        
-        # Create bill items and update stock
-        for item_data in data['items']:
-            try:
-                cloth_item = ClothItem.objects.get(id=item_data['item_id'])
-                quantity = int(item_data['quantity'])
-                
-                # Check stock availability
-                if hasattr(cloth_item, 'stock'):
-                    if cloth_item.stock.quantity < quantity:
-                        transaction.set_rollback(True)
-                        return Response(
-                            {'error': f'Insufficient stock for {cloth_item.name}'},
-                            status=status.HTTP_400_BAD_REQUEST
-                        )
-                    
-                    # Reduce stock
-                    cloth_item.stock.quantity -= quantity
-                    cloth_item.stock.save()
-                
-                # Create bill item
-                BillItem.objects.create(
-                    bill=bill,
-                    item=cloth_item,
-                    quantity=quantity,
-                    unit_price=cloth_item.price
-                )
+        try:
+            serializer = CreateBillSerializer(data=request.data)
             
-            except ClothItem.DoesNotExist:
-                transaction.set_rollback(True)
-                return Response(
-                    {'error': f'Item with id {item_data["item_id"]} not found'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-        
-        # Calculate totals
-        bill.calculate_totals()
-        
-        # Send email with PDF if customer email is provided
-        if bill.customer_email:
-            try:
-                from .pdf_generator import generate_bill_pdf
-                from .email_utils import send_bill_email
+            if not serializer.is_valid():
+                print(f"Validation errors: {serializer.errors}")
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            data = serializer.validated_data
+            
+            # Generate unique bill number
+            bill_number = self._generate_bill_number()
+            
+            # Create bill
+            bill = Bill.objects.create(
+                bill_number=bill_number,
+                customer_name=data['customer_name'],
+                customer_phone=data.get('customer_phone', ''),
+                customer_email=data.get('customer_email', ''),
+                discount=data.get('discount', 0),
+                tax_rate=data.get('tax_rate', 0),
+                notes=data.get('notes', '')
+            )
+            
+            # Create bill items and update stock
+            for item_data in data['items']:
+                try:
+                    cloth_item = ClothItem.objects.get(id=item_data['item_id'])
+                    quantity = int(item_data['quantity'])
+                    
+                    # Check stock availability
+                    if hasattr(cloth_item, 'stock'):
+                        if cloth_item.stock.quantity < quantity:
+                            transaction.set_rollback(True)
+                            return Response(
+                                {'error': f'Insufficient stock for {cloth_item.name}. Available: {cloth_item.stock.quantity}, Requested: {quantity}'},
+                                status=status.HTTP_400_BAD_REQUEST
+                            )
+                        
+                        # Reduce stock
+                        cloth_item.stock.quantity -= quantity
+                        cloth_item.stock.save()
+                    
+                    # Create bill item
+                    BillItem.objects.create(
+                        bill=bill,
+                        item=cloth_item,
+                        quantity=quantity,
+                        unit_price=cloth_item.price
+                    )
                 
-                pdf_content = generate_bill_pdf(bill)
-                email_sent = send_bill_email(bill, pdf_content)
-                
-                response_data = BillSerializer(bill).data
-                response_data['email_sent'] = email_sent
-                
-                return Response(response_data, status=status.HTTP_201_CREATED)
-            except Exception as e:
-                # Log error but still return success for bill creation
-                print(f"Email sending failed: {str(e)}")
-        
-        return Response(
-            BillSerializer(bill).data,
-            status=status.HTTP_201_CREATED
-        )
+                except ClothItem.DoesNotExist:
+                    transaction.set_rollback(True)
+                    return Response(
+                        {'error': f'Item with id {item_data["item_id"]} not found'},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+                except Exception as e:
+                    transaction.set_rollback(True)
+                    print(f"Error processing item {item_data['item_id']}: {str(e)}")
+                    return Response(
+                        {'error': f'Error processing item: {str(e)}'},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    )
+            
+            # Calculate totals
+            bill.calculate_totals()
+            
+            # Send email with PDF if customer email is provided
+            if bill.customer_email:
+                try:
+                    from .pdf_generator import generate_bill_pdf
+                    from .email_utils import send_bill_email
+                    
+                    pdf_content = generate_bill_pdf(bill)
+                    email_sent = send_bill_email(bill, pdf_content)
+                    
+                    response_data = BillSerializer(bill).data
+                    response_data['email_sent'] = email_sent
+                    
+                    return Response(response_data, status=status.HTTP_201_CREATED)
+                except Exception as e:
+                    # Log error but still return success for bill creation
+                    print(f"Email sending failed: {str(e)}")
+            
+            return Response(
+                BillSerializer(bill).data,
+                status=status.HTTP_201_CREATED
+            )
+            
+        except Exception as e:
+            print(f"Bill creation error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response(
+                {'error': f'Failed to create bill: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @action(detail=True, methods=['get'])
     def download_pdf(self, request, pk=None):

@@ -4,36 +4,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloth Shop Management</title>
+    <title>Dashboard - Cloth Shop Management</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">
+<body class="sidebar-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
                 <i class="fas fa-store"></i>
-                <span>Cloth Shop</span>
+                <span class="brand-text">Cloth Shop</span>
             </div>
-            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <button class="sidebar-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-bars"></i>
             </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="{% url 'inventory' %}"><i class="fas fa-boxes"></i> Inventory</a></li>
-                <li><a href="{% url 'billing' %}"><i class="fas fa-receipt"></i> Billing</a></li>
-                <li><a href="{% url 'reports' %}"><i class="fas fa-chart-line"></i> Reports</a></li>
-            </ul>
-            <div id="authInfo" class="auth-info"></div>
         </div>
-    </nav>
+        
+        <nav class="sidebar-nav">
+            <a href="{% url 'dashboard' %}" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="{% url 'inventory' %}" class="nav-item">
+                <i class="fas fa-boxes"></i>
+                <span class="nav-text">Inventory</span>
+            </a>
+            <a href="{% url 'billing' %}" class="nav-item">
+                <i class="fas fa-receipt"></i>
+                <span class="nav-text">Billing</span>
+            </a>
+            <a href="{% url 'reports' %}" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span class="nav-text">Reports</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-info" id="sidebarUserInfo">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">Loading...</div>
+                    <div class="user-role">Admin</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="confirmLogout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span>
+            </button>
+        </div>
+    </aside>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <h1 class="page-title">Dashboard</h1>
+    <div class="main-wrapper">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="mobile-sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="page-title">
+                <i class="fas fa-home"></i> Dashboard
+            </h1>
+            <div class="topbar-actions" id="authInfo"></div>
+        </header>
 
+        <!-- Main Content -->
+        <main class="content">
             <!-- Stats Cards -->
             <div class="stats-grid">
                 <div class="stat-card">
@@ -71,7 +110,7 @@
                         <i class="fas fa-dollar-sign"></i>
                     </div>
                     <div class="stat-details">
-                        <h3 id="totalRevenue">$0</h3>
+                        <h3 id="totalRevenue">₹0</h3>
                         <p>Total Revenue</p>
                     </div>
                 </div>
@@ -131,10 +170,26 @@
                     </div>
                 </div>
             </div>
+        </main>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-content confirm-modal">
+            <div class="modal-icon" id="confirmIcon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3 id="confirmTitle">Confirm Action</h3>
+            <p id="confirmMessage">Are you sure you want to proceed?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirmBtn">Confirm</button>
+            </div>
         </div>
-    </main>
+    </div>
 
     <script src="{% static 'js/config.js' %}"></script>
-    <script src="{% static 'js/dashboard.js' %}?v=2"></script>
+    <script src="{% static 'js/sidebar.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}?v=3"></script>
 </body>
 </html>
