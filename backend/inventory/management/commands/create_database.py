@@ -23,7 +23,7 @@ class Command(BaseCommand):
         try:
             # Connect to PostgreSQL server
             conn = psycopg2.connect(
-                dbname='postgres',
+                dbname='clothBilling',
                 user=db_user,
                 password=db_password,
                 host=db_host,
