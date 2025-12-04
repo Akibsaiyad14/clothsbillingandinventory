@@ -6,8 +6,8 @@ class Command(BaseCommand):
     help = 'Create a demo user for quick login testing'
 
     def handle(self, *args, **options):
-        username = 'admin'
-        password = 'admin123'
+        username = 'sakir'
+        password = 'sakir123'
         email = 'demo@example.com'
 
         if User.objects.filter(username=username).exists():
