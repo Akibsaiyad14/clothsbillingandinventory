@@ -237,10 +237,14 @@ async function createBill() {
         }))
     };
     
+    // Show loading overlay
+    showLoader('Creating bill...');
+    
     try {
         // Debug: Check if user is logged in
         const token = localStorage.getItem('access_token');
         if (!token) {
+            hideLoader();
             showNotification('Please login first', 'error');
             setTimeout(() => window.location.href = '/login/', 1500);
             return;
@@ -253,7 +257,9 @@ async function createBill() {
         });
         
         console.log('Bill created:', bill);
-        showNotification('Bill created successfully! Redirecting to dashboard...', 'success');
+        updateLoader('Generating PDF...');
+        
+        showNotification('Bill created successfully!', 'success');
         
         // Download PDF with authentication
         const response = await fetch(`${API_ENDPOINTS.bills}${bill.id}/download_pdf/`, {
@@ -275,13 +281,17 @@ async function createBill() {
             document.body.removeChild(a);
         }
         
+        updateLoader('Redirecting to dashboard...');
+        
         // Redirect to dashboard after 1.5 seconds
         setTimeout(() => {
+            hideLoader();
             window.location.href = '/dashboard/';
         }, 1500);
         
     } catch (error) {
         console.error('Error creating bill:', error);
+        hideLoader();
         showNotification('Failed to create bill', 'error');
     }
 }

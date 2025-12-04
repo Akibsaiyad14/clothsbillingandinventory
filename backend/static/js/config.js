@@ -169,6 +169,70 @@ function showNotification(message, type = 'success') {
     }, 3000);
 }
 
+// Loading overlay functions
+function showLoader(message = 'Loading...') {
+    // Remove existing loader if any
+    hideLoader();
+    
+    const loader = document.createElement('div');
+    loader.id = 'globalLoader';
+    loader.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        backdrop-filter: blur(4px);
+    `;
+    
+    loader.innerHTML = `
+        <div style="text-align: center;">
+            <div style="
+                width: 60px;
+                height: 60px;
+                border: 4px solid rgba(255, 255, 255, 0.3);
+                border-top: 4px solid #fff;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 1rem;
+            "></div>
+            <div id="loaderMessage" style="
+                color: white;
+                font-size: 1.125rem;
+                font-weight: 500;
+            ">${message}</div>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+    
+    document.body.appendChild(loader);
+}
+
+function updateLoader(message) {
+    const loaderMessage = document.getElementById('loaderMessage');
+    if (loaderMessage) {
+        loaderMessage.textContent = message;
+    }
+}
+
+function hideLoader() {
+    const loader = document.getElementById('globalLoader');
+    if (loader) {
+        loader.remove();
+    }
+}
+
 // Check authentication and update UI
 async function checkAuth() {
     const username = localStorage.getItem('username');
